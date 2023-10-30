@@ -4,14 +4,15 @@ import (
 	"net/http"
 	"time"
 
+	helmet "github.com/danielkov/gin-helmet"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
 	"github.com/aungkoko1234/tickermaster_backend/config"
-	"github.com/aungkoko1234/tickermaster_backend/controller"
 	"github.com/aungkoko1234/tickermaster_backend/model"
-	repository "github.com/aungkoko1234/tickermaster_backend/repository/user"
 	"github.com/aungkoko1234/tickermaster_backend/router"
-	service "github.com/aungkoko1234/tickermaster_backend/service/user"
 )
 
 
@@ -19,23 +20,11 @@ func main() {
 	//db
     db := config.DatabaseConnection()
 
-	validate := validator.New()
-
 	db.Table("users").AutoMigrate(&model.Users{})
-
-	//init repository
-	usersRepository := repository.NewUsersRepositoryImpl(db)
-
-	//init service
-	usersService := service.NewUsersServiceImpl(usersRepository, validate)
-
-	//init controller 
-	usersController := controller.NewUserController(usersService)
-	authController := controller.NewAuthController(usersService)
 
 	//init router
 
-	routes := router.NewRouter(usersController,authController)
+	routes := setUpRouters()
 
 
 
@@ -52,4 +41,39 @@ func main() {
 		panic(err)
 	}
    
+}
+
+func setUpRouters() *gin.Engine{
+	db := config.DatabaseConnection()
+
+	validate := validator.New()
+
+	service := gin.Default()
+
+	service.GET("",func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK,"Welcome Home")
+	})
+
+	service.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
+	})
+
+	route := service.Group("/api")
+
+	route.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"*"},
+		AllowHeaders:  []string{"*"},
+		AllowWildcard: true,
+	}))
+	route.Use(helmet.Default())
+	route.Use(gzip.Gzip(gzip.BestCompression))
+
+	db.Table("users").AutoMigrate(&model.Users{})
+
+	router.InitUserRouters(db,route,validate)
+	router.IntiAuthRouters(db,route,validate)
+
+	return service
+
 }

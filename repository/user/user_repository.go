@@ -1,4 +1,4 @@
-package repository
+package user_repository
 
 import "github.com/aungkoko1234/tickermaster_backend/model"
 

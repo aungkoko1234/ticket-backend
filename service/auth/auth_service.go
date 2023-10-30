@@ -1,4 +1,4 @@
-package service
+package auth_service
 
 import (
 	"github.com/aungkoko1234/tickermaster_backend/data/request"
