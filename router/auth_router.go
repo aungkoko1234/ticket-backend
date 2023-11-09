@@ -20,4 +20,5 @@ func IntiAuthRouters(db *gorm.DB, route *gin.RouterGroup,validate * validator.Va
 
 	authRouter := route.Group("/auth")
 	authRouter.POST("login",authController.Login)
+	authRouter.POST("register",authController.Register)
 }

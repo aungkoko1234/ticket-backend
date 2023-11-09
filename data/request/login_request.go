@@ -1,6 +1,6 @@
 package request
 
 type LoginRequest struct {
-	Email string `validate:"required,min=1,max=200" json:"email"`
-	Password string `validate:"required,min=1,max=200" json:"password"`
+	Email string `json:"email" binding:"required,email,min=1,max=200" `
+	Password string `json:"password" binding:"required,min=8"`
 }

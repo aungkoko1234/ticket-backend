@@ -51,17 +51,17 @@ func (u UsersServiceImpl) Update(user request.UpdateUserRequest) {
 	u.UserRepository.Update(userData)
 }
 
-func (u UsersServiceImpl) Delete(userId int) {
+func (u UsersServiceImpl) Delete(userId string) {
 	u.UserRepository.Delete(userId)
 }
 
-func (u UsersServiceImpl) FindById(userId int ) response.UserResponse{
+func (u UsersServiceImpl) FindById(userId string ) response.UserResponse{
 	userData, err := u.UserRepository.FindById(userId)
 
 	helper.ErrorPanic(err)
 
 	userResponse := response.UserResponse {
-		Id   : userData.Id,
+		Id   : userData.ID,
 		Name : userData.Name,
 		Email: userData.Email ,
 	}
@@ -76,7 +76,7 @@ func (u UsersServiceImpl) FindAll() []response.UserResponse {
 
 	for _,value := range result {
 		user := response.UserResponse{
-			Id: value.Id,
+			Id: value.ID,
 			Name: value.Name,
 			Email:  value.Email,
 		}

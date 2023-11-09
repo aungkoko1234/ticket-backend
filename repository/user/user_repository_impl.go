@@ -23,18 +23,18 @@ func (u UsersRepositoryImpl) Save (user model.Users) {
 }
 
 func (u UsersRepositoryImpl) Update (user model.Users) {
-	var updateUser = request.UpdateUserRequest{Id : user.Id,Name: user.Name,Email: user.Email}
+	var updateUser = request.UpdateUserRequest{Id : user.ID,Name: user.Name,Email: user.Email}
 	result := u.Db.Model(&user).Updates(updateUser)
 	helper.ErrorPanic(result.Error)
 }
 
-func (u UsersRepositoryImpl) Delete (userId  int) {
+func (u UsersRepositoryImpl) Delete (userId  string) {
 	var user model.Users
 	result := u.Db.Where("id = ?",userId).Delete(&user)
 	helper.ErrorPanic(result.Error)
 }
 
-func (u UsersRepositoryImpl) FindById (userId int) (model.Users,error) {
+func (u UsersRepositoryImpl) FindById (userId string) (model.Users,error) {
 	var user model.Users
 	result := u.Db.Find(&user,userId)
 

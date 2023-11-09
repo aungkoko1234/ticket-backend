@@ -2,12 +2,12 @@ package controller
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/aungkoko1234/tickermaster_backend/data/request"
 	"github.com/aungkoko1234/tickermaster_backend/data/response"
 	"github.com/aungkoko1234/tickermaster_backend/helper"
 	service "github.com/aungkoko1234/tickermaster_backend/service/user"
+	"github.com/aungkoko1234/tickermaster_backend/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,19 +22,16 @@ func NewUserController (service service.UsersService) *UserController {
 }
 
 func (controller *UserController) Create(ctx *gin.Context) {
-	createTagRequest := request.CreateUserRequest{}
-	err := ctx.ShouldBindJSON(&createTagRequest)
-    helper.ErrorPanic(err)
-
-	controller.usersService.Create(createTagRequest)
-
-	webResponse := response.Response{
-		Code:   200,
-		Status: "Ok",
-		Data:   nil,
+	createUserRequest := request.CreateUserRequest{}
+	if err := ctx.ShouldBindJSON(&createUserRequest); err != nil {
+		message := utils.ParseError(err)
+        utils.ValidationErrorReponse(ctx, http.StatusBadRequest, http.MethodPost, message)
+		return
 	}
 
-	ctx.JSON(http.StatusOK,webResponse)
+	controller.usersService.Create(createUserRequest)
+
+	utils.ApiResponse(ctx, "Register Success", http.StatusOK, http.MethodPost, gin.H{"message": "Your account is successfully registered"})
 }
 
 func (controller *UserController) Update(ctx *gin.Context) {
@@ -43,10 +40,8 @@ func (controller *UserController) Update(ctx *gin.Context) {
     helper.ErrorPanic(err)
 
 	userId := ctx.Param("userId")
-	id, err := strconv.Atoi(userId)
-    helper.ErrorPanic(err)
 
-	updateUserRequest.Id = id
+	updateUserRequest.Id = userId
 
 	controller.usersService.Update(updateUserRequest)
 
@@ -61,9 +56,8 @@ func (controller *UserController) Update(ctx *gin.Context) {
 
 func (controller *UserController) Delete(ctx *gin.Context) {
 	userId := ctx.Param("userId")
-	id, err := strconv.Atoi(userId)
-	helper.ErrorPanic(err)
-	controller.usersService.Delete(id)
+	// id, err := strconv.Atoi(userId)
+	controller.usersService.Delete(userId)
 
 	webResponse := response.Response{
 		Code:   200,
@@ -77,10 +71,8 @@ func (controller *UserController) Delete(ctx *gin.Context) {
 
 func (controller *UserController) FindById(ctx *gin.Context) {
 	userId := ctx.Param("userId")
-	id, err := strconv.Atoi(userId)
-	helper.ErrorPanic(err)
 
-	userResponse := controller.usersService.FindById(id)
+	userResponse := controller.usersService.FindById(userId)
 
 	webResponse := response.Response{
 		Code:   200,

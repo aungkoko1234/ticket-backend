@@ -4,9 +4,8 @@ import (
 	"net/http"
 
 	"github.com/aungkoko1234/tickermaster_backend/data/request"
-	"github.com/aungkoko1234/tickermaster_backend/data/response"
-	"github.com/aungkoko1234/tickermaster_backend/helper"
 	service "github.com/aungkoko1234/tickermaster_backend/service/user"
+	"github.com/aungkoko1234/tickermaster_backend/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,21 +21,30 @@ func NewAuthController (service service.UsersService) *AuthController {
 
 func (controller *AuthController) Login(ctx *gin.Context) {
 	loginRequest := request.LoginRequest{}
-	err := ctx.ShouldBindJSON(&loginRequest)
-    helper.ErrorPanic(err)
+	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
+		message := utils.ParseError(err)
+        utils.ValidationErrorReponse(ctx, http.StatusBadRequest, http.MethodPost, message)
+		return
+	}
 
 	token,err := controller.usersService.LoginCheck(loginRequest)
 
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "username or password is incorrect."})
+		utils.ValidationErrorReponse(ctx, http.StatusUnauthorized, http.MethodPost,gin.H{"message": "username or password is incorrect."})
+		return
+	}
+	utils.ApiResponse(ctx, "Login Success", http.StatusOK, http.MethodPost, gin.H{"token": token})
+}
+
+func (controller *AuthController) Register(ctx *gin.Context){
+	registerRequest :=request.RegisterRequest{}
+	if err := ctx.ShouldBindJSON(&registerRequest); err != nil {
+		message := utils.ParseError(err)
+        utils.ValidationErrorReponse(ctx, http.StatusBadRequest, http.MethodPost, message)
 		return
 	}
 
-	webResponse := response.Response{
-		Code:   200,
-		Status: "Ok",
-		Data:   token,
-	}
+	controller.usersService.Create(request.CreateUserRequest(registerRequest))
 
-	ctx.JSON(http.StatusOK,webResponse)
+	utils.ApiResponse(ctx, "Register Success", http.StatusOK, http.MethodPost, gin.H{"message": "Your account is successfully registered"})
 }

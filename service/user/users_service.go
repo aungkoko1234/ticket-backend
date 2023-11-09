@@ -8,8 +8,8 @@ import (
 type UsersService interface {
 	Create(user request.CreateUserRequest)
 	Update(user request.UpdateUserRequest)
-	Delete (userId int)
-	FindById(userId int) response.UserResponse
+	Delete (userId string)
+	FindById(userId string) response.UserResponse
 	FindAll() []response.UserResponse
 	LoginCheck(login request.LoginRequest) (string,error)
 }
