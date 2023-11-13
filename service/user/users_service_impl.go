@@ -1,8 +1,6 @@
 package user_service
 
 import (
-	"fmt"
-
 	"github.com/aungkoko1234/tickermaster_backend/data/request"
 	"github.com/aungkoko1234/tickermaster_backend/data/response"
 	"github.com/aungkoko1234/tickermaster_backend/helper"
@@ -95,9 +93,6 @@ func (u UsersServiceImpl) LoginCheck(login request.LoginRequest) (string,error) 
 	userData,err := u.UserRepository.FindByEmail(login.Email)
 
     helper.ErrorPanic(err)
-
-	fmt.Println("user",userData.Password)
-	fmt.Println("request",login.Password)
 
 	err = VerifyPassword(userData.Password,login.Password) 
 
