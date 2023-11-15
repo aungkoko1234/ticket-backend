@@ -29,6 +29,5 @@ func InitUserRouters(db *gorm.DB, route *gin.RouterGroup,validate * validator.Va
 			 userRouter.POST("", userController.Create)
 			 userRouter.PATCH("/:userId", userController.Update)
 			 userRouter.DELETE("/:userId", userController.Delete)
-		 
-
+		
 }

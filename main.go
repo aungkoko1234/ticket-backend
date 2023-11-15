@@ -70,9 +70,11 @@ func setUpRouters() *gin.Engine{
 	route.Use(gzip.Gzip(gzip.BestCompression))
 
 	db.Table("users").AutoMigrate(&model.Users{})
+	db.Table("countries").AutoMigrate(&model.Countries{})
 
 	router.InitUserRouters(db,route,validate)
 	router.IntiAuthRouters(db,route,validate)
+	router.InitCountryRouters(db,route,validate)
 
 	return service
 
