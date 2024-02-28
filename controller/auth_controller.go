@@ -33,8 +33,9 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 		utils.ValidationErrorReponse(ctx, http.StatusUnauthorized, http.MethodPost,gin.H{"message": "username or password is incorrect."})
 		return
 	}
-	utils.ApiResponse(ctx, "Login Success", http.StatusOK, http.MethodPost, gin.H{"token": token})
+	utils.ApiResponse(ctx, "Post", http.StatusOK, http.MethodPost, gin.H{"token": token})
 }
+
 
 func (controller *AuthController) Register(ctx *gin.Context){
 	registerRequest :=request.RegisterRequest{}

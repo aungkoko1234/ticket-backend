@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitCountryRouters(db *gorm.DB, route *gin.RouterGroup,validate * validator.Validate ) {
+func InitCountryRouters(db *gorm.DB, route *gin.RouterGroup,validate *validator.Validate ) {
 		 	//init repository
 			 countryRepository := country_repository.NewCountriesRepositoryImpl(db)
 
